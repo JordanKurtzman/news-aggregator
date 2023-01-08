@@ -4,41 +4,32 @@ import React, {useState, useEffect} from 'react'
 export const GuardianNews = () => {
 
     const [ headlines, setHeadlines ] = useState([])
-    const [ pageNumber, setPageNumber ] = useState(2)
+    const [ pageNumber, setPageNumber ] = useState(1)
     const apiKey = process.env.REACT_APP_GUARDIAN_NEWS_API_KEY
     
     
     const handleShowMore = () => {
         setPageNumber(pageNumber + 1)
-        fetch(`https://content.guardianapis.com/search?page=${pageNumber}&api-key=${apiKey}`).then((response) => {
-            return response.json()
-        }).then((data) => {
-            const newHeadlines = data.response.results
-            setHeadlines((currentHeadlines) => ([...currentHeadlines, newHeadlines]))
-        })
+        console.log(pageNumber)
     }
         
-       
-        
-    
-    // useEffect(() => {
-    //     axios.get(`https://content.guardianapis.com/search?&api-key=${apiKey}`)
-    //         .then((res) => {
-    //             setData(res.data.response.results)
-    //         })
-    //         .catch(function (error) {
-    //             console.log(error);
-    //         })
-            
-    // }, [data])
 
     useEffect(() => {
-        fetch(`https://content.guardianapis.com/search?&api-key=${apiKey}`).then((response) => {
+        fetch(`https://content.guardianapis.com/search?page=${pageNumber}&api-key=${apiKey}`).then((response) => {
         return response.json()
         }).then((data) => {
-            setHeadlines(data.response.results)
+
+            if(pageNumber ===1 ){
+                setHeadlines(data.response.results)
+            }
+            else {
+                let newHeadlines = data.response.results
+                let newArray = headlines.concat(newHeadlines)
+                setHeadlines(newArray)
+            }
+            
         })
-    }, [apiKey])
+    }, [apiKey, pageNumber])
     return (
         <div>
             {headlines.map((item) => 
